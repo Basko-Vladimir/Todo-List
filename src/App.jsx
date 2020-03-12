@@ -12,7 +12,7 @@ class App extends React.Component {
         {title: 'Patterns', isDone: true, priority: 'high'}
     ];
 
-    filterValue = 'Active';
+    filterValue = 'Completed';
     render = () => {
         return (
             <div className="App">
