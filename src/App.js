@@ -5,12 +5,6 @@ import TodoListTasks from "./TodoListTasks";
 import TodoListFooter from "./TodoListFooter";
 
 class App extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.newTasksTitileRef = React.createRef();
-    }
-
     changeStatus = (task, isDone) => {
         let newTasks = this.state.tasks.map( t => {
             if (t === task){
