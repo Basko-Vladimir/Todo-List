@@ -3,12 +3,12 @@
 }
 
 .todoList {
-    width: 500px;
-    margin: 0 auto;
+  width: 500px;
+  margin: 0 auto;
 }
 
 .todoList > div {
-    padding: 10px;
+  padding: 10px;
 }
 
 .todoList-task {
@@ -16,5 +16,5 @@
 }
 
 .filter-active {
-    background-color: blue;
+  background-color: blue;
 }
