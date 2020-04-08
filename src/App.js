@@ -5,10 +5,14 @@ import TodoListTasks from "./TodoListTasks";
 import TodoListFooter from "./TodoListFooter";
 
 class App extends React.Component {
-
     componentDidMount() {
         this.restoreState();
     }
+    state = {
+        tasks: [],
+        filterValue: "All",
+    };
+    nextTaskId = 0;
 
     saveState = () => {
        let stateAsString = JSON.stringify(this.state);
@@ -16,24 +20,17 @@ class App extends React.Component {
     };
 
     restoreState = () => {
-        let state = {
-            tasks: [],
-            filterValue: "All"
-        };
         let stateAsString = localStorage.getItem('our-state');
         if (stateAsString != null) {
-            state = JSON.parse(stateAsString);
-            this.nextTaskId = state.tasks.sort((a, b) => a.id - b.id)[state.tasks.length - 1].id + 1; // установка id для новой таски после перезагрузки
-            this.setState(state);
+            this.state = JSON.parse(stateAsString);
+            this.state.tasks.forEach( t => {
+                if (t.id >= this.nextTaskId){
+                    this.nextTaskId = t.id + 1;
+                }
+            });
+            this.setState(this.state);
         }
     };
-
-    state = {
-        tasks: [],
-        filterValue: "All",
-    };
-
-    nextTaskId = 0;
 
     changeTask = (taskId, obj) => {
         let newTasks = this.state.tasks.map( t => {
@@ -54,6 +51,13 @@ class App extends React.Component {
 
     changeTitle = (taskId, title) => {
         this.changeTask(taskId, {title})
+    };
+
+    deleteTask = (taskId) => {
+        let newTasks = this.state.tasks.filter( t => t.id !== taskId);
+        this.setState({
+            tasks: newTasks
+        }, () => this.saveState() )
     };
 
     onAddTaskClick = (newText) => {
@@ -84,6 +88,7 @@ class App extends React.Component {
                     <TodoListHeader addTask={this.onAddTaskClick}/>
                     <TodoListTasks  changeStatus={this.changeStatus}
                                     changeTitle={this.changeTitle}
+                                    deleteTask={this.deleteTask}
                                     tasks={this.state.tasks.filter( t => { switch (this.state.filterValue) {
                                                                                 case 'All':  return true;
                                                                                 case 'Active': return t.isDone;
