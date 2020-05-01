@@ -9,7 +9,7 @@ class TodoListHeader extends React.Component {
     render = () => {
         return (
             <div className="todoList-header">
-                <TodoListTitle title={this.props.title} />
+                <TodoListTitle title={this.props.title} deleteTodoList={this.props.deleteTodoList}/>
                 <AddNewItemForm addItem={this.props.addItem} />
             </div>
         );

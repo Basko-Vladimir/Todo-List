@@ -2,6 +2,7 @@ import React from 'react';
 import TodoListHeader from "./TodoListHeader/TodoListHeader";
 import TodoListTasks from "./TodoListTasks/TodoListTasks";
 import TodoListFooter from "./TodoListFooter/TodoListFooter";
+import {connect} from "react-redux";
 
 class TodoList extends React.Component {
     componentDidMount() {
@@ -31,32 +32,36 @@ class TodoList extends React.Component {
         }
     };
 
-    changeTask = (taskId, obj) => {
-        let newTasks = this.state.tasks.map( t => {
-            if (t.id === taskId){
-                return {...t, ...obj}
-            } else {
-                return t
-            }
-        });
-        this.setState({
-            tasks:newTasks
-        }, () => this.saveState() )
-    };
+    // onChangeTask = (taskId, obj) => {
+    //     let newTasks = this.state.tasks.map( t => {
+    //         if (t.id === taskId){
+    //             return {...t, ...obj}
+    //         } else {
+    //             return t
+    //         }
+    //     });
+    //     this.setState({
+    //         tasks:newTasks
+    //     }, () => this.saveState() )
+    // };
 
     changeStatus = (taskId, isDone) => {
-        this.changeTask(taskId, {isDone})
+        this.props.changeTask(taskId, {isDone}, this.props.id)
     };
 
     changeTitle = (taskId, title) => {
-        this.changeTask(taskId, {title})
+        this.props.changeTask(taskId, {title}, this.props.id)
     };
 
-    deleteItem= (taskId) => {
-        let newTasks = this.state.tasks.filter( t => t.id !== taskId);
-        this.setState({
-            tasks: newTasks
-        }, () => this.saveState() )
+    onDeleteTask= (taskId) => {
+        // let newTasks = this.state.tasks.filter( t => t.id !== taskId);
+        // this.setState({
+        //     tasks: newTasks
+        // }, () => this.saveState() )
+        this.props.deleteTask(taskId, this.props.id)
+    };
+    onDeleteTodoList = () => {
+        this.props.deleteTodoList(this.props.id);
     };
 
     onAddItemClick = (newText) => {
@@ -67,10 +72,11 @@ class TodoList extends React.Component {
             priority: "low"
         };
         this.nextItemId++;
-        let newTasks = [...this.state.tasks, newTask];
-        this.setState( {
-            tasks: newTasks,
-        }, () => this.saveState() );
+        // let newTasks = [...this.state.tasks, newTask];
+        // this.setState( {
+        //     tasks: newTasks,
+        // }, () => this.saveState() );
+        this.props.addTask(newTask, this.props.id);
     };
 
     changeFilter = (newFilterValue) => {
@@ -82,11 +88,11 @@ class TodoList extends React.Component {
     render = () => {
         return (
             <div className="todoList">
-                <TodoListHeader addItem={this.onAddItemClick} title={this.props.title}/>
+                <TodoListHeader addItem={this.onAddItemClick} title={this.props.title} deleteTodoList={this.onDeleteTodoList}/>
                 <TodoListTasks  changeStatus={this.changeStatus}
                                 changeTitle={this.changeTitle}
-                                deleteItem={this.deleteItem}
-                                tasks={this.state.tasks.filter( t => { switch (this.state.filterValue) {
+                                deleteTask={this.onDeleteTask}
+                                tasks={this.props.tasks.filter( t => { switch (this.state.filterValue) {
                                                                             case 'All':  return true;
                                                                             case 'Active': return t.isDone;
                                                                             case 'Completed': return !t.isDone;
@@ -97,5 +103,25 @@ class TodoList extends React.Component {
     }
 }
 
-export default TodoList;
+
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addTask: (newTask, todoListId) => {
+            dispatch({type:'ADD_TASK', newTask, todoListId})
+        },
+        changeTask: (taskId, obj, todoListId) => {
+            dispatch({type:'CHANGE_TASK', taskId, obj, todoListId})
+        },
+        deleteTask: (taskId, todoListId) => {
+            dispatch({type: 'DELETE_TASK', taskId, todoListId})
+        },
+        deleteTodoList: (todoListId) => {
+            dispatch({type: 'DELETE_TODOLIST', todoListId})
+        }
+
+    }
+};
+
+export default connect(null, mapDispatchToProps)(TodoList);
 
