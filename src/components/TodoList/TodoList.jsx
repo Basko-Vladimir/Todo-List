@@ -3,7 +3,8 @@ import TodoListHeader from "./TodoListHeader/TodoListHeader";
 import TodoListTasks from "./TodoListTasks/TodoListTasks";
 import TodoListFooter from "./TodoListFooter/TodoListFooter";
 import {connect} from "react-redux";
-import {addTask, changeTask, deleteTask, deleteTodoList} from "../../redux/reducer";
+import {addTask, changeTask, deleteTask, deleteTodoList, setTasks} from "../../redux/reducer";
+import axios from "axios";
 
 class TodoList extends React.Component {
     componentDidMount() {
@@ -21,33 +22,18 @@ class TodoList extends React.Component {
     };
 
     restoreState = () => {
-        let tasks = localStorage.getItem(`our-state ${this.props.id}`);
-        if (tasks) {
-            tasks = JSON.parse(tasks);
-            tasks.tasks.forEach( t => {
-                if (t.id >= this.nextItemId){
-                    this.nextItemId = t.id + 1;
+        axios.get(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks`,
+            {withCredentials: true,
+            headers: {'API-KEY':'c2812a99-b1c5-4f1a-b023-99177b7645a3'}})
+            .then(response => {
+                if (!response.data.error){
+                    this.props.setTasks(response.data.items, this.props.id)
                 }
-            });
-            this.setState(tasks);
-        }
+            })
     };
 
-    // onChangeTask = (taskId, obj) => {
-    //     let newTasks = this.state.tasks.map( t => {
-    //         if (t.id === taskId){
-    //             return {...t, ...obj}
-    //         } else {
-    //             return t
-    //         }
-    //     });
-    //     this.setState({
-    //         tasks:newTasks
-    //     }, () => this.saveState() )
-    // };
-
-    changeStatus = (taskId, isDone) => {
-        this.props.changeTask(taskId, {isDone}, this.props.id)
+    changeStatus = (taskId, status) => {
+        this.props.changeTask(taskId, {status}, this.props.id)
     };
 
     changeTitle = (taskId, title) => {
@@ -55,29 +41,30 @@ class TodoList extends React.Component {
     };
 
     onDeleteTask= (taskId) => {
-        // let newTasks = this.state.tasks.filter( t => t.id !== taskId);
-        // this.setState({
-        //     tasks: newTasks
-        // }, () => this.saveState() )
         this.props.deleteTask(taskId, this.props.id)
     };
+
     onDeleteTodoList = () => {
-        this.props.deleteTodoList(this.props.id);
+        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}`,
+            {withCredentials: true,
+            headers: { 'API-KEY':'c2812a99-b1c5-4f1a-b023-99177b7645a3'}})
+            .then(response => {
+                if (response.data.resultCode === 0){
+                    this.props.deleteTodoList(this.props.id)
+                }
+            })
     };
 
     onAddItemClick = (newText) => {
-        let newTask = {
-            id: this.nextItemId,
-            title: newText,
-            isDone: false,
-            priority: "low"
-        };
-        this.nextItemId++;
-        // let newTasks = [...this.state.tasks, newTask];
-        // this.setState( {
-        //     tasks: newTasks,
-        // }, () => this.saveState() );
-        this.props.addTask(newTask, this.props.id);
+        axios.post(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks`,
+            {title: newText},
+            {withCredentials: true,
+                headers: {'API-KEY': 'c2812a99-b1c5-4f1a-b023-99177b7645a3'}})
+            .then(response => {
+                if (response.data.resultCode === 0) {
+                    this.props.addTask(response.data.data.item)
+                }
+            })
     };
 
     changeFilter = (newFilterValue) => {
@@ -87,13 +74,14 @@ class TodoList extends React.Component {
     };
 
     render = () => {
+        let {tasks = []} = this.props;
         return (
             <div className="todoList">
                 <TodoListHeader addItem={this.onAddItemClick} title={this.props.title} deleteTodoList={this.onDeleteTodoList}/>
                 <TodoListTasks  changeStatus={this.changeStatus}
                                 changeTitle={this.changeTitle}
                                 deleteTask={this.onDeleteTask}
-                                tasks={this.props.tasks.filter( t => { switch (this.state.filterValue) {
+                                tasks={tasks.filter( t => { switch (this.state.filterValue) {
                                                                             case 'All':  return true;
                                                                             case 'Active': return t.isDone;
                                                                             case 'Completed': return !t.isDone;
@@ -104,25 +92,5 @@ class TodoList extends React.Component {
     }
 }
 
-
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        addTask: (newTask, todoListId) => {
-            dispatch(addTask(newTask, todoListId))
-        },
-        changeTask: (taskId, obj, todoListId) => {
-            dispatch(changeTask(taskId, obj, todoListId))
-        },
-        deleteTask: (taskId, todoListId) => {
-            dispatch(deleteTask(taskId, todoListId))
-        },
-        deleteTodoList: (todoListId) => {
-            dispatch(deleteTodoList(todoListId))
-        }
-
-    }
-};
-
-export default connect(null, mapDispatchToProps)(TodoList);
+export default connect(null, {addTask, changeTask, deleteTask, deleteTodoList, setTasks})(TodoList);
 

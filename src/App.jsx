@@ -3,7 +3,8 @@ import './App.css';
 import TodoList from "./components/TodoList/TodoList";
 import AddNewItemForm from "./components/AddNewItemForm/AddNewItemForm";
 import {connect} from "react-redux";
-import {addTodoList} from "./redux/reducer";
+import {addTodoList, setTodoLists} from "./redux/reducer";
+import axios from "axios";
 
 class App extends React.Component{
     componentDidMount() {
@@ -16,16 +17,10 @@ class App extends React.Component{
     nextTodoList = 0;
 
     restoreState = () => {
-        let todoLists = localStorage.getItem(`todoLists`);
-        if (todoLists) {
-            todoLists = JSON.parse(todoLists);
-            todoLists.todoLists.forEach( t => {
-                if (t.id >= this.nextTodoList){
-                    this.nextTodoList = t.id + 1;
-                }
-            });
-            this.setState(todoLists);
-        }
+        axios.get('https://social-network.samuraijs.com/api/1.1/todo-lists', {withCredentials: true})
+            .then(response => {
+                this.props.setTodoLists(response.data)
+            })
     };
 
     saveState = () => {
@@ -34,16 +29,17 @@ class App extends React.Component{
     };
 
     onAddTodoList = (title) => {
-        let newTodoList = {
-            id: this.nextTodoList,
-            title: title,
-            tasks: []
-        };
-        this.nextTodoList++;
-        this.props.addTodoList(newTodoList);
-        // this.setState({
-        //     todoLists: [...this.state.todoLists, newTodoList]
-        // }, () => this.saveState() )
+        axios.post('https://social-network.samuraijs.com/api/1.1/todo-lists',
+            {title: title},
+            {
+                withCredentials: true,
+                headers: { 'API-KEY':'c2812a99-b1c5-4f1a-b023-99177b7645a3'}
+            })
+            .then(response => {
+                if (response.data.resultCode === 0) {
+                    this.props.addTodoList(response.data.data.item);
+                }
+            })
     };
 
     render = () => {
@@ -67,13 +63,6 @@ const mapStateToProps = (state) => {
     }
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        addTodoList: (newTodoList) => {
-            dispatch(addTodoList(newTodoList))
-        }
-    }
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, {addTodoList, setTodoLists})(App);
 
