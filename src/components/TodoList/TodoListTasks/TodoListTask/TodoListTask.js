@@ -7,20 +7,20 @@ class TodoListTask extends React.Component {
     };
 
     onChangeStatus = (event) => {
-        let status = event.currentTarget.checked ? 2 : 0;
-        this.props.changeStatus(this.props.task.id, status);
+        this.props.changeStatus(this.props.task, event.currentTarget.checked);
     };
 
-    onTitleChanged = (event) => {
-        this.props.changeTitle(this.props.task.id, event.currentTarget.value)
-    };
+    // onTitleChanged = (event) => {
+    //     this.props.changeTitle(this.props.task, event.currentTarget.value)
+    // };
 
     activeEditMode = () => {
         this.setState({editMode: true})
     };
 
-    deactivateEditMode = () => {
-        this.setState({editMode: false})
+    deactivateEditMode = (event) => {
+        this.setState({editMode: false});
+        this.props.changeTitle(this.props.task, event.currentTarget.value)
     };
 
     onDeleteTask = () => {
@@ -28,16 +28,16 @@ class TodoListTask extends React.Component {
     };
 
     render = () => {
+        let isDone =  this.props.task.status === 2;
         return (
-                <div className={this.props.task.status === 2 ? `todoList-task done` : `todoList-task`}>
-                    <input type="checkbox" checked={this.props.task.status === 2}
+                <div className={isDone ? `todoList-task done` : `todoList-task`}>
+                    <input type="checkbox" checked={isDone}
                            onChange={this.onChangeStatus}/>
                     { this.state.editMode
                         ? <input autoFocus={true}
-                                 value={this.props.task.title}
-                                 onBlur={this.deactivateEditMode}
-                                 onChange={this.onTitleChanged}/>
-                        : <span onClick={this.activeEditMode}>{`${this.props.task.id} - ${this.props.task.title}`}, priority: {this.props.task.priority}</span>
+                                 defaultValue={this.props.task.title}
+                                 onBlur={this.deactivateEditMode}/>
+                        : <span onClick={this.activeEditMode}>{`${this.props.task.title}`}, priority: {this.props.task.priority}</span>
                     }   <button onClick={this.onDeleteTask}>Delete</button>
                 </div>
         );
