@@ -3,24 +3,27 @@ import '../../../../App.css';
 
 class TodoListTask extends React.Component {
     state = {
-        editMode: false
+        editMode: false,
+        title: this.props.task.title
     };
 
     onChangeStatus = (event) => {
         this.props.changeStatus(this.props.task, event.currentTarget.checked);
     };
 
-    // onTitleChanged = (event) => {
-    //     this.props.changeTitle(this.props.task, event.currentTarget.value)
-    // };
-
-    activeEditMode = () => {
-        this.setState({editMode: true})
+    onTitleChanged = (event) => {
+        this.setState({
+            title: event.currentTarget.value
+        })
     };
 
-    deactivateEditMode = (event) => {
+    activeEditMode = () => {
+        this.setState({editMode: true});
+    };
+
+    deactivateEditMode = () => {
         this.setState({editMode: false});
-        this.props.changeTitle(this.props.task, event.currentTarget.value)
+        this.props.changeTitle(this.props.task, this.state.title)
     };
 
     onDeleteTask = () => {
@@ -35,7 +38,8 @@ class TodoListTask extends React.Component {
                            onChange={this.onChangeStatus}/>
                     { this.state.editMode
                         ? <input autoFocus={true}
-                                 defaultValue={this.props.task.title}
+                                 onChange={this.onTitleChanged}
+                                 value={this.state.title}
                                  onBlur={this.deactivateEditMode}/>
                         : <span onClick={this.activeEditMode}>{`${this.props.task.title}`}, priority: {this.props.task.priority}</span>
                     }   <button onClick={this.onDeleteTask}>Delete</button>

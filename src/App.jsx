@@ -4,37 +4,26 @@ import TodoList from "./components/TodoList/TodoList";
 import AddNewItemForm from "./components/AddNewItemForm/AddNewItemForm";
 import {connect} from "react-redux";
 import {addTodoList, setTodoLists} from "./redux/reducer";
-import axios from "axios";
+import {api} from "./api/api";
 
 class App extends React.Component{
     componentDidMount() {
         this.restoreState()
     }
 
-    state = {
-        todoLists: []
-    };
-    nextTodoList = 0;
+    // state = {
+    //     todoLists: []
+    // };
 
     restoreState = () => {
-        axios.get('https://social-network.samuraijs.com/api/1.1/todo-lists', {withCredentials: true})
+            api.getTodoLists()
             .then(response => {
                 this.props.setTodoLists(response.data)
             })
     };
 
-    saveState = () => {
-        let stateToLocalStorage = JSON.stringify(this.state);
-        localStorage.setItem(`todoLists`, stateToLocalStorage)
-    };
-
     onAddTodoList = (title) => {
-        axios.post('https://social-network.samuraijs.com/api/1.1/todo-lists',
-            {title: title},
-            {
-                withCredentials: true,
-                headers: { 'API-KEY':'c2812a99-b1c5-4f1a-b023-99177b7645a3'}
-            })
+        api.addTodoList({title})
             .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.addTodoList(response.data.data.item);
