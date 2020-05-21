@@ -10,32 +10,26 @@ const instance = axios.create({
 export const api = {
     changeTask(todoListId, taskId, task){
         return instance.put(`${todoListId}/tasks/${taskId}`, task)
-            .then(response => response)
     },
 
     deleteTask(todoListId, taskId){
         return instance.delete(`${todoListId}/tasks/${taskId}`)
-            .then(response => response)
     },
 
     getTasks(todoListId){
         return instance.get(`${todoListId}/tasks`)
-            .then(response => response)
     },
 
    addTask(todoListId, newText){
         return instance.post(`${todoListId}/tasks`, {title: newText})
-            .then(response => response)
    },
 
    deleteTodoList(todoListId){
         return instance.delete(`${todoListId}`)
-            .then(response => response)
    },
 
     getTodoLists(){
         return instance.get()
-            .then(response => response)
     },
 
     addTodoList(title){
@@ -44,9 +38,6 @@ export const api = {
 
     changeTodoList(todoListId, newTitle){
         return instance.put(`${todoListId}`, {title:newTitle})
-            .then(response => response)
     }
-
-
 };
 
