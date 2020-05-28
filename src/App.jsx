@@ -3,32 +3,20 @@ import './App.css';
 import TodoList from "./components/TodoList/TodoList";
 import AddNewItemForm from "./components/AddNewItemForm/AddNewItemForm";
 import {connect} from "react-redux";
-import {addTodoList, setTodoLists} from "./redux/reducer";
-import {api} from "./api/api";
+import {addTodoListThunk, getTodoListsThunk} from "./redux/reducer";
+
 
 class App extends React.Component{
     componentDidMount() {
         this.restoreState()
     }
 
-    // state = {
-    //     todoLists: []
-    // };
-
     restoreState = () => {
-            api.getTodoLists()
-            .then(response => {
-                this.props.setTodoLists(response.data)
-            })
+        this.props.getTodoListsThunk()
     };
 
     onAddTodoList = (title) => {
-        api.addTodoList({title})
-            .then(response => {
-                if (response.data.resultCode === 0) {
-                    this.props.addTodoList(response.data.data.item);
-                }
-            })
+        this.props.addTodoListThunk({title});
     };
 
     render = () => {
@@ -52,6 +40,5 @@ const mapStateToProps = (state) => {
     }
 };
 
-
-export default connect(mapStateToProps, {addTodoList, setTodoLists})(App);
+export default connect(mapStateToProps, {addTodoListThunk, getTodoListsThunk})(App);
 

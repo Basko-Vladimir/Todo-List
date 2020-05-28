@@ -3,8 +3,15 @@ import TodoListHeader from "./TodoListHeader/TodoListHeader";
 import TodoListTasks from "./TodoListTasks/TodoListTasks";
 import TodoListFooter from "./TodoListFooter/TodoListFooter";
 import {connect} from "react-redux";
-import {addTask, deleteTask, deleteTodoList, setTasks, updateTask, updateTodoList} from "../../redux/reducer";
-import {api} from "../../api/api";
+import {
+    addTaskThunk, changeTaskThunk, changeTodoListThunk,
+    deleteTaskThunk,
+    deleteTodoList, deleteTodoListThunk,
+    loadTasksThunk,
+    setTasks,
+    updateTask,
+    updateTodoList
+} from "../../redux/reducer";
 
 class TodoList extends React.Component {
     componentDidMount() {
@@ -17,24 +24,12 @@ class TodoList extends React.Component {
     };
 
     restoreState = () => {
-        api.getTasks(this.props.id)
-            .then(response => {
-                if (!response.data.error){
-                    this.props.setTasks(response.data.items, this.props.id)
-                }
-            })
+        this.props.loadTasksThunk(this.props.id);
     };
 
     changeTask = (task, obj) => {
-        api.changeTask(this.props.id, task.id, {...task, ...obj})
-            .then(response => {
-                if (response.data.resultCode === 0){
-                    this.props.updateTask(task.id, obj, this.props.id)
-                }
-            })
-        };
-
-
+        this.props.changeTaskThunk(this.props.id, task.id, {...task, ...obj});
+    };
 
     changeStatus = (task, status) => {
         this.changeTask(task, {status : status ? 2 : 0})
@@ -45,39 +40,19 @@ class TodoList extends React.Component {
     };
 
     onDeleteTask= (taskId) => {
-        api.deleteTask(this.props.id, taskId)
-            .then( response => {
-                if (response.data.resultCode === 0){
-                    this.props.deleteTask(taskId, this.props.id)
-                }
-            })
+        this.props.deleteTaskThunk(this.props.id, taskId)
     };
 
     onDeleteTodoList = () => {
-        api.deleteTodoList(this.props.id)
-            .then(response => {
-                if (response.data.resultCode === 0){
-                    this.props.deleteTodoList(this.props.id)
-                }
-            })
+        this.props.deleteTodoListThunk(this.props.id)
     };
 
     changeTodoList = (newTitle) => {
-        api.changeTodoList(this.props.id, newTitle)
-            .then(response => {
-                if (response.data.resultCode === 0){
-                    this.props.updateTodoList(this.props.id, newTitle)
-                }
-            })
+        this.props.changeTodoListThunk(this.props.id, newTitle);
     };
 
     onAddTask = (newText) => {
-        api.addTask(this.props.id, newText)
-            .then(response => {
-                if (response.data.resultCode === 0) {
-                    this.props.addTask(response.data.data.item)
-                }
-            })
+        this.props.addTaskThunk(this.props.id, newText)
     };
 
     changeFilter = (newFilterValue) => {
@@ -105,4 +80,5 @@ class TodoList extends React.Component {
     }
 }
 
-export default connect(null, {addTask, updateTask, deleteTask, deleteTodoList, setTasks, updateTodoList})(TodoList);
+export default connect(null,
+    {addTaskThunk, changeTaskThunk, deleteTaskThunk, deleteTodoListThunk, loadTasksThunk, changeTodoListThunk})(TodoList);

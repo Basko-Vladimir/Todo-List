@@ -1,3 +1,5 @@
+import {api} from "../api/api";
+
 const ADD_TODOLIST = 'todoList/Reducer/ADD_TODOLIST';
 const ADD_TASK = 'todoList/Reducer/ADD_TASK';
 const UPDATE_TASK = 'todoList/Reducer/UPDATE_TASK';
@@ -96,13 +98,83 @@ const Reducer = (state = initialState, action) => {
     }
 };
 
-export const setTasks = (tasks, todoListId) => ({type: SET_TASKS, tasks, todoListId});
+const setTasks = (tasks, todoListId) => ({type: SET_TASKS, tasks, todoListId});
 export const setTodoLists = (todoLists) => ({type:SET_TODOLISTS, todoLists});
 export const addTodoList  = (newTodoList) => ({type:ADD_TODOLIST, newTodoList});
-export const deleteTodoList  = (todoListId) => ({type:DELETE_TODOLIST, todoListId});
+const deleteTodoList  = (todoListId) => ({type:DELETE_TODOLIST, todoListId});
 export const addTask  = (newTask) => ({type:ADD_TASK, newTask});
-export const updateTask  = (taskId, obj, todoListId) => ({type:UPDATE_TASK, taskId, obj, todoListId});
-export const deleteTask  = (taskId, todoListId) => ({type:DELETE_TASK, taskId, todoListId});
-export const updateTodoList  = (todoListId, newTitle) => ({type:UPDATE_TODOLIST, todoListId, newTitle});
+const updateTask  = (taskId, todoListId, obj) => ({type:UPDATE_TASK, taskId, obj, todoListId});
+const deleteTask  = (taskId, todoListId) => ({type:DELETE_TASK, taskId, todoListId});
+const updateTodoList  = (todoListId, newTitle) => ({type:UPDATE_TODOLIST, todoListId, newTitle});
+
+export const loadTasksThunk = (todoListId) => (dispatch) => {
+    api.getTasks(todoListId)
+        .then(response => {
+            if (!response.data.error){
+                dispatch(setTasks(response.data.items, todoListId));
+            }
+        })
+};
+
+export const changeTaskThunk = (todoListId, taskId, obj) => (dispatch) => {
+    api.changeTask(todoListId, taskId, obj)
+        .then(response => {
+            if (response.data.resultCode === 0){
+                dispatch(updateTask(taskId, todoListId, obj));
+            }
+        })
+};
+
+export const deleteTaskThunk = (todoListId, taskId) => (dispatch) => {
+    api.deleteTask(todoListId, taskId)
+        .then( response => {
+            if (response.data.resultCode === 0){
+                dispatch(deleteTask(taskId, todoListId))
+            }
+        })
+};
+
+export const addTaskThunk = (todoListId, newTitle) => (dispatch) => {
+    api.addTask(todoListId, newTitle)
+        .then(response => {
+            if (response.data.resultCode === 0) {
+                dispatch(addTask(response.data.data.item))
+            }
+        })
+};
+
+export const deleteTodoListThunk = (todoListId) => (dispatch) => {
+    api.deleteTodoList(todoListId)
+        .then( response => {
+            if (response.data.resultCode === 0){
+                dispatch(deleteTodoList(todoListId))
+            }
+        })
+};
+
+export const changeTodoListThunk = (todoListId, newTitle) => (dispatch) => {
+    api.changeTodoList(todoListId, newTitle)
+        .then( response => {
+            if (response.data.resultCode === 0){
+                dispatch(updateTodoList(todoListId, newTitle))
+            }
+        })
+};
+
+export const getTodoListsThunk = () => (dispatch) => {
+    api.getTodoLists()
+        .then(response => {
+            dispatch(setTodoLists(response.data))
+        })
+};
+
+export const addTodoListThunk = (title) => (dispatch) => {
+    api.addTodoList(title)
+        .then(response => {
+            if (response.data.resultCode === 0) {
+                dispatch(addTodoList(response.data.data.item));
+            }
+        })
+};
 
 export default Reducer;
