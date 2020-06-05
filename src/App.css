@@ -27,3 +27,9 @@
 .todoList-task.done {
   opacity: 0.5;
 }
+
+.headerTodoList {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}

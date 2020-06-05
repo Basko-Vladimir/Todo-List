@@ -1,4 +1,5 @@
 import React from 'react';
+import "../../../../App.css";
 
 class TodoListTitle extends React.Component {
 
@@ -33,9 +34,12 @@ class TodoListTitle extends React.Component {
                              autoFocus={true}
                              onChange={this.onChangeTitle}
                              onBlur={this.changeTitleTodoList}/>
-                    : <h3 className="todoList-header__title" onClick={this.activateEditMode}>
-                        {this.props.title} <button onClick={this.props.deleteTodoList}>X</button>
-                    </h3>
+                    : <div className={'headerTodoList'}>
+                          <h3 className="todoList-header__title" onClick={this.activateEditMode}>
+                          {this.props.title}
+                          </h3>
+                          <button onClick={this.props.deleteTodoList}>X</button>
+                    </div>
                 }
 
             </>
