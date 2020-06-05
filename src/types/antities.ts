@@ -20,3 +20,8 @@ export type TaskType = {
     order: number
     addedDate: string
 }
+
+export type UpdateChangeTask = {
+    title?: string
+    status?: number
+}

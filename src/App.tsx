@@ -17,7 +17,9 @@ type MapDispatchToProps = {
     getTodoListsThunk: () => void
 }
 
-class App extends React.Component < MapStateToPropsType & MapDispatchToProps >{
+type PropsType = MapStateToPropsType & MapDispatchToProps
+
+class App extends React.Component <PropsType>{
     componentDidMount() {
         this.restoreState()
     }
@@ -31,7 +33,7 @@ class App extends React.Component < MapStateToPropsType & MapDispatchToProps >{
     };
 
     render = () => {
-        let todoLists = this.props.todoLists.map( t => <TodoList key={t.id} id={t.id} title={t.title} tasks={t.tasks}/> );
+        let todoLists = this.props.todoLists.map( (t) => <TodoList key={t.id} id={t.id} title={t.title} tasks={t.tasks} /> );
         return (
             <>
                 <div>

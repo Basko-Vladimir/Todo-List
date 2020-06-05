@@ -5,7 +5,8 @@ import TodoListFooter from "./TodoListFooter/TodoListFooter";
 import {connect} from "react-redux";
 import {addTaskThunk, changeTaskThunk, changeTodoListThunk,
         deleteTaskThunk, deleteTodoListThunk, getTasksThunk } from "../../redux/todoLists-reducer";
-import {TaskType} from "../../types/antities";
+import {TaskType, UpdateChangeTask} from "../../types/antities";
+import {AppStateType} from "../../redux/store";
 
 
 type LocalStateType = {
@@ -14,7 +15,8 @@ type LocalStateType = {
 }
 
 type OwnPropsType = {
-    id : string
+    id : string,
+    title: string
 }
 
 type MapDispatchToPropsType = {
@@ -26,10 +28,11 @@ type MapDispatchToPropsType = {
     changeTodoListThunk: (arg1: string, arg2: string) => void
 };
 
-
 type PropsType = LocalStateType & OwnPropsType & MapDispatchToPropsType;
 
-class TodoList extends React.Component< PropsType > {
+
+
+class TodoList extends React.Component <PropsType, LocalStateType> {
     componentDidMount() {
         this.restoreState();
     }
@@ -43,7 +46,7 @@ class TodoList extends React.Component< PropsType > {
         this.props.getTasksThunk(this.props.id);
     };
 
-    changeTask = (task: TaskType, obj) => {
+    changeTask = (task: TaskType, obj:UpdateChangeTask) => {
         this.props.changeTaskThunk(this.props.id, task.id, {...task, ...obj});
     };
 
@@ -52,7 +55,7 @@ class TodoList extends React.Component< PropsType > {
     };
 
     changeTitle = (task: TaskType, title: string) => {
-        this.changeTask(task.id, {title})
+        this.changeTask(task, {title})
     };
 
     onDeleteTask= (taskId: string) => {
@@ -85,7 +88,7 @@ class TodoList extends React.Component< PropsType > {
                 <TodoListTasks  changeStatus={this.changeStatus}
                                 changeTitle={this.changeTitle}
                                 deleteTask={this.onDeleteTask}
-                                tasks={tasks.filter( t => { switch (this.state.filterValue) {
+                                tasks={tasks.filter( (t) => { switch (this.state.filterValue) {
                                                                             case 'All':  return true;
                                                                             case 'Active': return t.status !== 2 ;
                                                                             case 'Completed': return t.status === 2;
@@ -96,4 +99,5 @@ class TodoList extends React.Component< PropsType > {
     }
 }
 
-export default connect(null, {addTaskThunk, changeTaskThunk, deleteTaskThunk, deleteTodoListThunk, getTasksThunk, changeTodoListThunk})(TodoList);
+export default connect<{}, MapDispatchToPropsType, PropsType, AppStateType>(null,
+    {addTaskThunk, changeTaskThunk, deleteTaskThunk, deleteTodoListThunk, getTasksThunk, changeTodoListThunk})(TodoList);
