@@ -100,5 +100,5 @@ class TodoList extends React.Component<PropsType, LocalStateType> {
     }
 }
 
-export default connect<{}, MapDispatchPropsType, PropsType, AppStateType>(null,
+export default connect<{}, MapDispatchPropsType, OwnPropsType, AppStateType>(null,
     {addTaskThunk, changeTaskThunk, deleteTaskThunk, deleteTodoListThunk, getTasksThunk, changeTodoListThunk})(TodoList);
