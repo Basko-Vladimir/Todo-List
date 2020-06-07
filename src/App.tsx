@@ -49,7 +49,7 @@ class App extends React.Component<PropsType>{
     }
 }
 
-const mapStateToProps = (state: AppStateType ) => {
+const mapStateToProps = (state: AppStateType ): MapStatePropsType => {
     return {
         todoLists: state.todoLists.todoLists
     }
