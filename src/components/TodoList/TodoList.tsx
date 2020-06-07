@@ -1,13 +1,12 @@
 import React from 'react';
-import TodoListHeader from "./TodoListHeader/TodoListHeader";
-import TodoListTasks from "./TodoListTasks/TodoListTasks";
-import TodoListFooter from "./TodoListFooter/TodoListFooter";
-import {connect} from "react-redux";
+import TodoListHeader from './TodoListHeader/TodoListHeader';
+import TodoListTasks from './TodoListTasks/TodoListTasks';
+import TodoListFooter from './TodoListFooter/TodoListFooter';
+import {connect} from 'react-redux';
 import {addTaskThunk, changeTaskThunk, changeTodoListThunk,
-        deleteTaskThunk, deleteTodoListThunk, getTasksThunk } from "../../redux/todoLists-reducer";
-import {TaskType, UpdateChangeTask} from "../../types/antities";
-import {AppStateType} from "../../redux/store";
-
+        deleteTaskThunk, deleteTodoListThunk, getTasksThunk } from '../../redux/todoLists-reducer';
+import {TaskType, UpdateChangeTask} from '../../types/types';
+import {AppStateType} from '../../redux/store';
 
 type LocalStateType = {
     tasks: Array<TaskType>
@@ -15,24 +14,23 @@ type LocalStateType = {
 }
 
 type OwnPropsType = {
-    id : string,
+    id : string
     title: string
+    tasks: Array<TaskType>
 }
 
-type MapDispatchToPropsType = {
-    addTaskThunk: (arg1: string, arg2: string) => void
-    changeTaskThunk: (arg1: string, arg2: string, arg3: TaskType) => void
-    deleteTaskThunk: (arg1: string, arg2: string) => void
-    deleteTodoListThunk: (arg1: string) => void
-    getTasksThunk: (arg1: string) => void
-    changeTodoListThunk: (arg1: string, arg2: string) => void
+type MapDispatchPropsType = {
+    addTaskThunk: (todoListId: string, newTitle: string) => void
+    changeTaskThunk: (todoListId: string, taskId: string, task: TaskType) => void
+    deleteTaskThunk: (todoListId: string, taskId: string) => void
+    deleteTodoListThunk: (todoListId: string) => void
+    getTasksThunk: (todoListId: string) => void
+    changeTodoListThunk: (todoListId: string, newTitle: string) => void
 };
 
-type PropsType = LocalStateType & OwnPropsType & MapDispatchToPropsType;
+type PropsType = OwnPropsType & MapDispatchPropsType;
 
-
-
-class TodoList extends React.Component <PropsType, LocalStateType> {
+class TodoList extends React.Component<PropsType, LocalStateType> {
     componentDidMount() {
         this.restoreState();
     }
@@ -50,7 +48,7 @@ class TodoList extends React.Component <PropsType, LocalStateType> {
         this.props.changeTaskThunk(this.props.id, task.id, {...task, ...obj});
     };
 
-    changeStatus = (task: TaskType, status: string) => {
+    changeStatus = (task: TaskType, status: boolean) => {
         this.changeTask(task, {status : status ? 2 : 0})
     };
 
@@ -84,11 +82,14 @@ class TodoList extends React.Component <PropsType, LocalStateType> {
         let {tasks = []} = this.props;
         return (
             <div className="todoList">
-                <TodoListHeader addItem={this.onAddTask} title={this.props.title} changeTodoList={this.changeTodoList} deleteTodoList={this.onDeleteTodoList}/>
+                <TodoListHeader addItem={this.onAddTask}
+                                title={this.props.title}
+                                changeTodoList={this.changeTodoList}
+                                deleteTodoList={this.onDeleteTodoList}/>
                 <TodoListTasks  changeStatus={this.changeStatus}
                                 changeTitle={this.changeTitle}
                                 deleteTask={this.onDeleteTask}
-                                tasks={tasks.filter( (t) => { switch (this.state.filterValue) {
+                                tasks={tasks.filter( t => { switch (this.state.filterValue) {
                                                                             case 'All':  return true;
                                                                             case 'Active': return t.status !== 2 ;
                                                                             case 'Completed': return t.status === 2;
@@ -99,5 +100,5 @@ class TodoList extends React.Component <PropsType, LocalStateType> {
     }
 }
 
-export default connect<{}, MapDispatchToPropsType, PropsType, AppStateType>(null,
+export default connect<{}, MapDispatchPropsType, PropsType, AppStateType>(null,
     {addTaskThunk, changeTaskThunk, deleteTaskThunk, deleteTodoListThunk, getTasksThunk, changeTodoListThunk})(TodoList);

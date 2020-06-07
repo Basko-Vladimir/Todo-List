@@ -1,5 +1,5 @@
 import axios from "axios";
-import {TaskType, TodoType} from "../types/antities";
+import {TaskType, TodoType} from "../types/types";
 
 const instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1/todo-lists/',

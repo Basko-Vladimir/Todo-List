@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import '../../../../App.css';
+import {TaskType} from '../../../../types/types';
 
-class TodoListTask extends React.Component {
+type OwnPropsType = {
+    changeStatus: (task: TaskType, status: boolean) => void
+    changeTitle: (task: TaskType, title: string) => void
+    task: TaskType
+    deleteTask: (taskId: string) => void
+}
+
+type LocalStateType = {
+    editMode: boolean
+    title: string
+}
+
+class TodoListTask extends React.Component<OwnPropsType, LocalStateType> {
     state = {
         editMode: false,
         title: this.props.task.title
     };
 
-    onChangeStatus = (event) => {
+    onChangeStatus = (event: ChangeEvent<HTMLInputElement>) => {
         this.props.changeStatus(this.props.task, event.currentTarget.checked);
     };
 
-    onTitleChanged = (event) => {
+    onTitleChanged = (event: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             title: event.currentTarget.value
         })
@@ -34,7 +47,7 @@ class TodoListTask extends React.Component {
         let isDone =  this.props.task.status === 2;
         return (
                 <div className={isDone ? `todoList-task done` : `todoList-task`}>
-                    <input type="checkbox" checked={isDone}
+                    <input type='checkbox' checked={isDone}
                            onChange={this.onChangeStatus}/>
                     { this.state.editMode
                         ? <input autoFocus={true}

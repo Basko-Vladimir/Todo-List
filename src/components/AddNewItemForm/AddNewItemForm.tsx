@@ -1,7 +1,16 @@
-import React from 'react';
+import React, {ChangeEvent, KeyboardEvent} from 'react';
 import '../../App.css';
 
-class AddNewItemForm extends React.Component {
+type LocalPropsType = {
+    error: boolean
+    title: string
+}
+
+type OwnPropsType = {
+    addItem: (newText: string) => void
+}
+
+class AddNewItemForm extends React.Component<OwnPropsType, LocalPropsType> {
     state = {
         error: false,
         title: ''
@@ -22,7 +31,7 @@ class AddNewItemForm extends React.Component {
         }
     };
 
-    onChangeInput = (e) => {
+    onChangeInput = (e:ChangeEvent<HTMLInputElement>) => {
         let newTitle = e.currentTarget.value;
         this.setState({
             error: false,
@@ -31,7 +40,7 @@ class AddNewItemForm extends React.Component {
 
     };
 
-    onKeyPress = (e) => {
+    onKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             this.onAddItem()
         }

@@ -1,5 +1,5 @@
 import {api} from "../api/api";
-import {TaskType, TodoType} from "../types/antities";
+import {TaskType, TodoType} from "../types/types";
 import {Dispatch} from "redux";
 
 const ADD_TODOLIST = 'todoList/Reducer/ADD_TODOLIST';

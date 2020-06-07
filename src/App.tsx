@@ -1,25 +1,24 @@
 import React from 'react';
 import './App.css';
-import TodoList from "./components/TodoList/TodoList";
-import AddNewItemForm from "./components/AddNewItemForm/AddNewItemForm";
+import TodoList from './components/TodoList/TodoList';
+import AddNewItemForm from './components/AddNewItemForm/AddNewItemForm';
 import {connect} from "react-redux";
-import {addTodoListThunk, getTodoListsThunk} from "./redux/todoLists-reducer";
-import {TodoType} from "./types/antities";
+import {addTodoListThunk, getTodoListsThunk} from './redux/todoLists-reducer';
+import {TodoType} from './types/types';
 import { AppStateType } from './redux/store';
 
-
-type MapStateToPropsType = {
+type MapStatePropsType = {
     todoLists: Array<TodoType>
 }
 
-type MapDispatchToProps = {
+type MapDispatchPropsType = {
     addTodoListThunk: (arg: string) => void
     getTodoListsThunk: () => void
 }
 
-type PropsType = MapStateToPropsType & MapDispatchToProps
+type PropsType = MapStatePropsType & MapDispatchPropsType
 
-class App extends React.Component <PropsType>{
+class App extends React.Component<PropsType>{
     componentDidMount() {
         this.restoreState()
     }
@@ -33,7 +32,7 @@ class App extends React.Component <PropsType>{
     };
 
     render = () => {
-        let todoLists = this.props.todoLists.map( (t) => <TodoList key={t.id} id={t.id} title={t.title} tasks={t.tasks} /> );
+        let todoLists = this.props.todoLists.map( (t) => <TodoList key={t.id} id={t.id} title={t.title} tasks={t.tasks}/> );
         return (
             <>
                 <div>
@@ -53,5 +52,6 @@ const mapStateToProps = (state: AppStateType ) => {
     }
 };
 
-export default connect<MapStateToPropsType, MapDispatchToProps, {}, AppStateType>( mapStateToProps, {addTodoListThunk, getTodoListsThunk})(App);
+export default connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>
+        (mapStateToProps, {addTodoListThunk, getTodoListsThunk})(App);
 

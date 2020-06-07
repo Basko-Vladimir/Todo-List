@@ -1,8 +1,13 @@
-import React from 'react';
-import "../../../../App.css";
+import React, {ChangeEvent} from 'react';
+import '../../../../App.css';
 
-class TodoListTitle extends React.Component {
+type OwnPropsType = {
+    title: string
+    changeTodoList: (todoListId: string) => void
+    deleteTodoList: () => void
+}
 
+class TodoListTitle extends React.Component<OwnPropsType> {
     state = {
         editMode: false,
         title: this.props.title
@@ -12,7 +17,7 @@ class TodoListTitle extends React.Component {
         this.setState({ editMode: true })
     };
 
-    onChangeTitle = (event) => {
+    onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
         this.setState({
                 title: event.currentTarget.value
             })
@@ -22,8 +27,6 @@ class TodoListTitle extends React.Component {
         this.setState({editMode: false });
         this.props.changeTodoList(this.state.title)
     };
-
-
 
     render = () => {
         return (
