@@ -11,13 +11,13 @@ const DELETE_TODOLIST = 'todoList/Reducer/DELETE_TODOLIST';
 const SET_TODOLISTS = 'todoList/Reducer/SET_TODOLISTS';
 const UPDATE_TODOLIST = 'todoList/Reducer/UPDATE_TODOLIST';
 
-type InitialStateType = typeof initialState;
+export type InitialStateType = typeof initialState;
 
 const initialState = {
     todoLists: [] as Array<TodoType>
 };
 
-const todoListsReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
+export const todoListsReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
         case ADD_TODOLIST:
             let newTodoList = {...action.newTodoList, tasks: []};
@@ -150,7 +150,7 @@ type UpdateTodoListSuccessType = {
 }
 const updateTodoListSuccess  = (todoListId: string, newTitle: string):UpdateTodoListSuccessType  => ({type:UPDATE_TODOLIST, todoListId, newTitle});
 
-type ActionsType = SetTasksSuccessType | SetTodoListsSuccessType | AddTodoListSuccessType | DeleteTodoListSuccessType
+export type ActionsType = SetTasksSuccessType | SetTodoListsSuccessType | AddTodoListSuccessType | DeleteTodoListSuccessType
     | AddTaskSuccessType | UpdateTaskSuccessType | DeleteTaskSuccessType | UpdateTodoListSuccessType;
 
 
